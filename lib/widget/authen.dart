@@ -18,6 +18,13 @@ class _AuthenState extends State<Authen> {
   String user, password;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkStatus();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -75,20 +82,22 @@ class _AuthenState extends State<Authen> {
           print('map = $map');
           UserModel model = UserModel.fromJson(map);
           if (password == model.password) {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Cash(
-                    userModel: model,
-                  ),
-                ),
-                (route) => false);
+            savePreferance();
           } else {
             normalDialog(context, 'Password False Please Try Again');
           }
         }
       }
     }).catchError(() {});
+  }
+
+  void routeToService() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Cash(),
+        ),
+        (route) => false);
   }
 
   Widget buildTextFieldUser() => Container(
@@ -146,5 +155,22 @@ class _AuthenState extends State<Authen> {
       width: 120,
       child: Image.asset('images/logo.png'),
     );
+  }
+
+  Future<Null> savePreferance() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString('Username', user);
+
+    routeToService();
+  }
+
+  Future<Null> checkStatus() async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String user = preferences.getString('Username');
+      if (user.isNotEmpty) {
+        routeToService();
+      }
+    } catch (e) {}
   }
 }
