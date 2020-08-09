@@ -8,6 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ungmarker/models/user_model.dart';
 import 'package:ungmarker/utility/my_constant.dart';
 import 'package:ungmarker/widget/authen.dart';
+import 'package:ungmarker/widget/page0.dart';
+import 'package:ungmarker/widget/page1.dart';
+import 'package:ungmarker/widget/page2.dart';
+import 'package:ungmarker/widget/page3.dart';
+import 'package:ungmarker/widget/page4.dart';
+import 'package:ungmarker/widget/page5.dart';
 
 class Cash extends StatefulWidget {
   final UserModel userModel;
@@ -39,6 +45,8 @@ class _CashState extends State<Cash> {
     'Setup'
   ];
 
+  List<Widget> widgets = [Page0(), Page1(), Page2(), Page3(), Page4(), Page5()];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -60,13 +68,15 @@ class _CashState extends State<Cash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          buildTitle(),
-          buildCash(),
-          buildDivider(),
-          buildCatigory(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            buildTitle(),
+            buildCash(),
+            buildDivider(),
+            buildCatigory(),
+          ],
+        ),
       ),
       appBar: AppBar(
         backgroundColor: Colors.indigo.shade900,
@@ -109,7 +119,19 @@ class _CashState extends State<Cash> {
 
     int index = 0;
     for (var title in titles) {
-      Widget widget = Card();
+      Widget widget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          creratdMyCard(index),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+        ],
+      );
       lists.add(widget);
       index++;
     }
@@ -117,10 +139,42 @@ class _CashState extends State<Cash> {
     return lists;
   }
 
-  Widget buildCatigory() => GridView.extent(shrinkWrap: true,
-        physics: ScrollPhysics(),
-        maxCrossAxisExtent: 200,
-        children: createCards(),
+  Widget creratdMyCard(int index) {
+    return GestureDetector(
+      onTap: () {
+        print('index = $index');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => widgets[index],
+            ));
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        color: Colors.blue.shade600,
+        child: Container(
+          padding: EdgeInsets.all(16),
+          child: Icon(
+            iconDatas[index],
+            size: 72,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildCatigory() => Container(
+        margin: EdgeInsets.only(left: 8, right: 8),
+        child: GridView.extent(
+          crossAxisSpacing: 20,
+          shrinkWrap: true,
+          physics: ScrollPhysics(),
+          maxCrossAxisExtent: 180,
+          children: createCards(),
+        ),
       );
 
   Widget buildDivider() {
